@@ -1,0 +1,26 @@
+# Build
+/build/
+/cmx_build/output/
+*.o
+*.a
+*.so
+*.bin
+*.elf
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+
+# Logs
+*.log
+
+# System
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
