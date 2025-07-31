@@ -1,540 +1,220 @@
-# CMatrix – Embedded ML Inference Engine
+CMatrix is a lightweight, cross-platform inference runtime designed specifically for executing neural networks on resource-constrained embedded systems and microcontrollers. Built with deterministic performance and minimal memory footprint in mind.
+What CMatrix Is
+CMatrix provides a lean inference engine for running pre-trained neural networks on embedded hardware where every kilobyte of RAM and microsecond of execution time matters. It focuses on inference only - no training capabilities.
+Core Purpose:
 
-<div align="center">
+Execute neural network inference on microcontrollers (ARM Cortex-M, RISC-V, etc.)
+Provide deterministic, real-time performance characteristics
+Minimize memory usage through static allocation and optimized operators
+Enable AI capabilities in battery-powered, cost-sensitive devices
 
-**CMatrix v1.0.0-alpha | Proprietary Software**
+What CMatrix Is Not
 
-**Optimized Deep Learning Runtime for Microcontrollers and Edge Devices**
+Not a training framework - CMatrix only performs inference
+Not a full ML platform - No data preprocessing pipelines or model management
+Not for high-end hardware - Optimized for constraints, not maximum throughput
+Not production-ready yet - Currently in early development (v0.1.0-alpha)
 
-*Professional ML inference engine designed for production deployment on resource-constrained embedded systems.*
+Key Features
+Lean Architecture
 
-</div>
+Minimal footprint: Designed for systems with 32KB+ RAM
+Static memory allocation: Predictable memory usage, no dynamic allocation
+Modular operators: Include only the operators your model needs
+Cross-platform: ARM Cortex-M, RISC-V, x86 (with platform-specific optimizations)
 
----
+Performance Focus
 
-## Overview
+Deterministic execution: Consistent inference times for real-time applications
+Optimized operators: Hand-tuned implementations for common NN operations
+Memory-efficient: Techniques like operator fusion and in-place operations
+Quantization support: INT8 and INT16 quantized models (FP32 planned)
 
-CMatrix is a lightweight, optimized machine learning inference engine specifically designed for embedded systems and microcontrollers. Built with production requirements in mind, it provides reliable, efficient neural network execution on ARM Cortex-M, RISC-V, and Xtensa processors.
+Current Status & Limitations
+⚠️ Alpha Stage Warning
+CMatrix is in early development. Expect:
 
-### Key Features
+Breaking API changes between versions
+Limited operator support (see supported operators below)
+Platform support varies (some targets experimental)
+Documentation incomplete in many areas
 
-**Performance Optimization**
-- Hand-optimized kernels for ARM NEON and RISC-V vector extensions
-- Operator fusion to reduce memory bandwidth and improve cache utilization
-- INT8 and INT16 quantization support with minimal accuracy loss
-- Memory pool allocation to eliminate runtime malloc/free overhead
+Currently Supported
 
-**Developer Experience**
-- Python toolchain for model conversion from ONNX and TensorFlow Lite
-- Performance profiling tools with detailed execution metrics
-- Cross-compilation support for major embedded toolchains
-- Comprehensive test suite with hardware validation
+Operators: Conv2D, Dense/Linear, ReLU, MaxPool2D, Flatten
+Platforms: ARM Cortex-M4/M7 (tested), x86 (development)
+Model formats: Custom CMatrix format (conversion tools in development)
+Data types: INT8, INT16
 
-**Production Ready**
-- Deterministic execution with consistent timing characteristics
-- Thread-safe runtime suitable for RTOS environments
-- Comprehensive error handling and graceful failure modes
-- Minimal external dependencies for easy integration
+Not Yet Supported
 
-**Hardware Support**
-- ARM Cortex-M3/M4/M7/M33/M55 processors
-- RISC-V RV32I/M/A/C with optional vector extensions
-- Xtensa ESP32 series processors
-- x86 platforms for development and testing
+Complex operators (LSTM, attention mechanisms, batch normalization)
+Dynamic input shapes
+ONNX/TensorFlow model import (planned for v0.2)
+Floating-point inference (planned)
+Advanced optimizations (operator fusion, etc.)
 
----
+Quick Start
+Prerequisites
 
-## Technical Architecture
+CMake 3.15+
+GCC or Clang compiler
+Target-specific toolchain (for cross-compilation)
 
-### Core Runtime
-
-CMatrix consists of a lightweight C++ runtime optimized for embedded deployment:
-
-```
-CMatrix Runtime Architecture:
-
-┌─────────────────────────────────────────────────────┐
-│                Model Loader                         │
-│  • Binary format parsing                           │
-│  • Memory layout optimization                      │
-│  • Operator registration                           │
-└─────────────────────────────────────────────────────┘
-┌─────────────────────────────────────────────────────┐
-│              Execution Engine                       │
-│  • Graph traversal and scheduling                  │
-│  • Memory management                               │
-│  • Operator dispatch                               │
-└─────────────────────────────────────────────────────┘
-┌─────────────────────────────────────────────────────┐
-│               Operator Library                      │
-│  • Convolution (2D, Depthwise, Transpose)         │
-│  • Activations (ReLU, Sigmoid, Tanh)              │
-│  • Pooling (Max, Average, Global)                 │
-│  • Linear (Dense, MatMul)                         │
-│  • Normalization (BatchNorm, LayerNorm)           │
-└─────────────────────────────────────────────────────┘
-┌─────────────────────────────────────────────────────┐
-│            Hardware Abstraction                     │
-│  • Platform-specific optimizations                 │
-│  • SIMD utilization                               │
-│  • Memory alignment                               │
-└─────────────────────────────────────────────────────┘
-```
-
-### Development Tools
-
-Python-based toolchain for model preparation and optimization:
-
-- **Model Converter**: ONNX and TensorFlow Lite to CMatrix format conversion
-- **Graph Optimizer**: Operator fusion, constant folding, and dead code elimination
-- **Quantization Tool**: Post-training quantization with calibration dataset support
-- **Performance Profiler**: Execution time analysis and bottleneck identification
-- **Deployment Generator**: Target-specific build configuration and integration code
-
----
-
-## Performance Characteristics
-
-### Benchmark Results
-
-Based on testing with common embedded ML models on real hardware:
-
-**Inference Latency (milliseconds)**
-
-| Model | ARM M4 @168MHz | ARM M7 @400MHz | RISC-V @200MHz |
-|-------|----------------|----------------|----------------|
-| MobileNet v2 (224x224) | 87.3 | 34.2 | 156.8 |
-| SqueezeNet 1.1 (227x227) | 52.6 | 21.4 | 89.3 |
-| Simple CNN (32x32) | 8.9 | 3.7 | 15.2 |
-| Keyword Spotting | 4.1 | 1.8 | 7.3 |
-
-**Memory Usage (KB)**
-
-| Model | Flash | RAM (Peak) | RAM (Average) |
-|-------|-------|------------|---------------|
-| MobileNet v2 | 1,280 | 196 | 164 |
-| SqueezeNet 1.1 | 756 | 128 | 98 |
-| Simple CNN | 64 | 28 | 22 |
-| Keyword Spotting | 45 | 18 | 14 |
-
-**Comparison with TensorFlow Lite Micro**
-- 15-25% faster inference on ARM Cortex-M7
-- 10-20% lower memory usage
-- 8-12% smaller binary size
-
-*Benchmarks performed with INT8 quantization where applicable*
-
----
-
-## Getting Started
-
-### System Requirements
-
-**Development Environment:**
-- Linux, macOS, or Windows with WSL2
-- Python 3.8 or later
-- CMake 3.14 or later
-- GCC 9+ or Clang 10+
-
-**Target Hardware:**
-- ARM Cortex-M with minimum 64KB RAM, 256KB Flash
-- RISC-V RV32IM with 32KB RAM minimum
-- ESP32 with 320KB+ available RAM
-
-### Installation
-
-```bash
-# Clone repository
-git clone https://github.com/yourorg/cmatrix
+Basic Installation
+bashgit clone https://github.com/[username]/cmatrix.git
 cd cmatrix
-
-# Set up development environment
-python -m pip install -r requirements.txt
 mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
-make -j$(nproc)
+cmake ..
+make
+Hello World Example
+c#include "cmatrix/runtime.h"
+
+int main() {
+    // Initialize CMatrix runtime
+    cmatrix_runtime_t* runtime = cmatrix_init();
+    
+    // Load model (compiled CMatrix format)
+    cmatrix_model_t* model = cmatrix_load_model("model.cmx");
+    
+    // Prepare input data
+    float input[784] = {/* your data */};
+    float output[10];
+    
+    // Run inference
+    cmatrix_infer(model, input, output);
+    
+    // Cleanup
+    cmatrix_cleanup(runtime);
+    return 0;
+}
+Architecture Overview
+CMatrix uses a modular architecture where each neural network operator is implemented as a separate, pluggable component:
+┌─────────────────┐
+│   Application   │
+├─────────────────┤
+│  CMatrix API    │
+├─────────────────┤
+│ Operator Engine │
+├─────────────────┤
+│ Memory Manager  │
+├─────────────────┤
+│ Platform Layer  │
+└─────────────────┘
+Components:
+
+API Layer: Simple C interface for model loading and inference
+Operator Engine: Dispatches operations to optimized implementations
+Memory Manager: Static allocation with predictable usage patterns
+Platform Layer: Hardware-specific optimizations and abstractions
+
+Platform Support
+PlatformStatusRAM Req.NotesARM Cortex-M4✅ Tested32KB+STM32F4 series verifiedARM Cortex-M7✅ Tested64KB+STM32H7 series verifiedRISC-V🔄 Experimental32KB+Basic support, needs testingx86/x64✅ DevelopmentAnyFor development and testingESP32📋 PlannedTBDPlanned for v0.2
+Model Conversion
+Currently, models must be converted to CMatrix's custom format. We provide conversion scripts for:
+bash# Convert from TensorFlow Lite (basic support)
+python tools/convert_tflite.py model.tflite model.cmx
+
+# Convert from ONNX (planned)
+python tools/convert_onnx.py model.onnx model.cmx  # Coming soon
+Supported Model Types:
+
+Simple feedforward networks
+Basic convolutional networks
+Small image classification models (MobileNet-style, simplified)
+
+Performance Benchmarks
+Preliminary benchmarks on STM32F4 (168MHz, 192KB RAM):
+ModelInference TimeMemory UsageAccuracyMNIST (Simple CNN)~45ms28KB97.2%Micro MobileNet~180ms85KB89.1%
+Note: Benchmarks are preliminary and may not reflect final performance
+Contributing
+CMatrix is in early development and we welcome contributions:
+How to Contribute
+
+Bug Reports: File issues with detailed reproduction steps
+Platform Testing: Help test on different MCU platforms
+Operator Implementation: Add new neural network operators
+Documentation: Improve guides and API documentation
+Model Testing: Validate models on real hardware
+
+Development Setup
+bash# Clone with submodules
+git clone --recursive https://github.com/[username]/cmatrix.git
 
 # Run tests
 make test
-```
-
-### Cross-Compilation Example
-
-```bash
-# ARM Cortex-M4 target
-cmake -B build_m4 \
-      -DCMAKE_TOOLCHAIN_FILE=cmake/arm-none-eabi.cmake \
-      -DTARGET_CPU=cortex-m4 \
-      -DUSE_NEON=OFF
-
-# RISC-V target
-cmake -B build_rv32 \
-      -DCMAKE_TOOLCHAIN_FILE=cmake/riscv32-unknown-elf.cmake \
-      -DTARGET_CPU=rv32imc
-```
-
----
-
-## API Reference
-
-### Basic Usage
-
-```cpp
-#include "cmatrix.h"
-
-int main() {
-    // Initialize runtime
-    cmx_status_t status = cmx_init();
-    if (status != CMX_SUCCESS) {
-        return -1;
-    }
-    
-    // Load model
-    cmx_model_t model;
-    status = cmx_load_model("model.cmx", &model);
-    if (status != CMX_SUCCESS) {
-        cmx_cleanup();
-        return -1;
-    }
-    
-    // Prepare input
-    float input_data[224 * 224 * 3];
-    // ... populate input_data ...
-    
-    // Set input
-    cmx_tensor_t input = {
-        .data = input_data,
-        .shape = {1, 224, 224, 3},
-        .dtype = CMX_FLOAT32
-    };
-    cmx_set_input(model, 0, &input);
-    
-    // Run inference
-    status = cmx_run(model);
-    if (status != CMX_SUCCESS) {
-        cmx_destroy_model(model);
-        cmx_cleanup();
-        return -1;
-    }
-    
-    // Get output
-    cmx_tensor_t* output = cmx_get_output(model, 0);
-    // ... process output ...
-    
-    // Cleanup
-    cmx_destroy_model(model);
-    cmx_cleanup();
-    return 0;
-}
-```
-
-### Model Conversion
-
-```python
-import cmx_tools as cmx
-
-# Convert ONNX model
-converter = cmx.Converter()
-converter.load_onnx('mobilenet_v2.onnx')
-
-# Apply optimizations
-converter.optimize(
-    quantization='int8',
-    operator_fusion=True,
-    target='arm-cortex-m7'
-)
-
-# Export to CMatrix format
-converter.export('mobilenet_v2.cmx')
-
-# Generate integration code
-cmx.generate_c_code(
-    model_path='mobilenet_v2.cmx',
-    output_dir='generated/',
-    target_config='stm32f7'
-)
-```
-
----
-
-## Supported Operations
-
-### Core Operators
-
-**Convolution Operations**
-- Conv2D (standard, depthwise, pointwise)
-- TransposeConv2D (deconvolution)
-- Conv1D for sequence processing
-
-**Activation Functions**
-- ReLU, ReLU6, LeakyReLU
-- Sigmoid, Tanh
-- Swish, Hardswish
-
-**Pooling Operations**
-- MaxPool2D, AveragePool2D
-- GlobalAveragePool, GlobalMaxPool
-- AdaptivePool (limited support)
-
-**Linear Operations**
-- Dense (fully connected)
-- MatMul (matrix multiplication)
-- Embedding layers
-
-**Normalization**
-- BatchNormalization
-- LayerNormalization (1D sequences)
-
-**Tensor Operations**
-- Reshape, Transpose
-- Concatenate, Split
-- Add, Multiply (element-wise)
-
-### Model Format Support
-
-| Format | Import | Optimization | Notes |
-|--------|--------|--------------|-------|
-| ONNX | Yes | Full | Recommended for PyTorch models |
-| TensorFlow Lite | Yes | Full | Complete operator coverage |
-| CMatrix (.cmx) | Yes | Native | Optimized binary format |
-
----
-
-## Integration Examples
-
-### RTOS Integration
-
-```cpp
-// FreeRTOS task example
-void ml_inference_task(void *parameters) {
-    cmx_model_t model;
-    cmx_load_model("sensor_model.cmx", &model);
-    
-    while (1) {
-        // Wait for sensor data
-        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
-        
-        // Run inference
-        cmx_set_input(model, 0, &sensor_input);
-        cmx_run(model);
-        cmx_tensor_t* result = cmx_get_output(model, 0);
-        
-        // Process result
-        process_ml_result(result);
-        
-        vTaskDelay(pdMS_TO_TICKS(100));
-    }
-}
-```
-
-### Arduino Integration
-
-```cpp
-#include "cmatrix.h"
-
-cmx_model_t gesture_model;
-
-void setup() {
-    Serial.begin(115200);
-    
-    // Initialize CMatrix
-    if (cmx_init() != CMX_SUCCESS) {
-        Serial.println("Failed to initialize CMatrix");
-        while(1);
-    }
-    
-    // Load gesture recognition model
-    if (cmx_load_model("gesture.cmx", &gesture_model) != CMX_SUCCESS) {
-        Serial.println("Failed to load model");
-        while(1);
-    }
-    
-    Serial.println("CMatrix initialized successfully");
-}
-
-void loop() {
-    // Read accelerometer data
-    float accel_data[3 * 32]; // 32 samples, 3 axes
-    read_accelerometer(accel_data);
-    
-    // Run gesture recognition
-    cmx_tensor_t input = {accel_data, {1, 32, 3}, CMX_FLOAT32};
-    cmx_set_input(gesture_model, 0, &input);
-    cmx_run(gesture_model);
-    
-    cmx_tensor_t* output = cmx_get_output(gesture_model, 0);
-    int gesture = get_max_index(output);
-    
-    Serial.printf("Detected gesture: %d\n", gesture);
-    delay(100);
-}
-```
-
----
-
-## Build Configuration
-
-### Memory Optimization
-
-```cmake
-# Minimal memory footprint
-set(CMX_ENABLE_PROFILING OFF)
-set(CMX_ENABLE_LOGGING OFF)
-set(CMX_STATIC_MEMORY ON)
-set(CMX_MAX_OPERATORS 32)
-set(CMX_MEMORY_POOL_SIZE 65536)
-
-# Performance optimization
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -flto")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -flto")
-```
-
-### Custom Target Configuration
-
-```cmake
-# STM32F7 example
-set(CMX_TARGET_ARCH "arm-cortex-m7")
-set(CMX_USE_NEON ON)
-set(CMX_USE_FPU ON)
-set(CMX_CACHE_LINE_SIZE 32)
-```
-
----
-
-## Testing and Validation
-
-### Unit Testing
-
-```bash
-# Run complete test suite
-cd build && make test
-
-# Run specific test categories
-./test_operators
-./test_memory_management
-./test_model_loading
-```
-
-### Hardware Validation
-
-```bash
-# Hardware-in-the-loop testing
-python tools/hardware_test.py --board stm32f767 --model models/test_model.cmx
-python tools/benchmark.py --target arm-m7 --models models/*.cmx
-```
-
-### Performance Profiling
-
-```python
-import cmx_tools.profiler as prof
-
-# Profile model execution
-profiler = prof.Profiler()
-profiler.load_model('mobilenet.cmx')
-profiler.set_target('arm-cortex-m7', clock_mhz=400)
-
-results = profiler.run_benchmark(num_iterations=100)
-print(f"Average latency: {results.avg_latency_ms:.2f}ms")
-print(f"Memory usage: {results.peak_memory_kb}KB")
-
-profiler.generate_report('profile_report.html')
-```
-
----
-
-## Deployment
-
-### Static Library
-
-```bash
-# Build static library for target
-make cmatrix_static
-
-# Link in your project
-target_link_libraries(your_app cmatrix_static)
-```
-
-### Header-Only Mode
-
-```cpp
-#define CMX_IMPLEMENTATION
-#include "cmatrix_single_header.h"
-// All functionality available in single header
-```
-
-### Custom Operator Support
-
-```cpp
-// Define custom operator
-cmx_status_t custom_relu_forward(
-    const cmx_tensor_t* input,
-    cmx_tensor_t* output,
-    const void* params
-) {
-    // Custom implementation
-    return CMX_SUCCESS;
-}
-
-// Register operator
-cmx_register_operator("CustomReLU", custom_relu_forward);
-```
-
----
-
-## Professional Support
-
-### Support Levels
-
-**Community Support**
-- GitHub issue tracking
-- Community forums and discussions
-- Documentation and examples
-
-**Professional Support**
-- Email support with guaranteed response times
-- Phone consultation sessions
-- Priority bug fixes and feature requests
-
-**Enterprise Support**
-- Dedicated technical account manager
-- Custom optimization consulting
-- On-site integration assistance
-- Training workshops and certification
-
-### Services
-
-**Integration Consulting**
-- Architecture review and optimization recommendations
-- Custom operator development
-- Performance tuning for specific applications
-- Deployment best practices and code review
-
-**Training and Certification**
-- CMatrix developer certification program
-- Advanced optimization techniques workshops
-- Custom training for development teams
-
----
-
-## License
-
-**Proprietary Software License**
-
-CMatrix is proprietary software. All rights reserved. Unauthorized copying, distribution, or modification is prohibited.
-
-For commercial licensing inquiries:
-- **Sales**: sales@cmatrix.com
-- **Support**: support@cmatrix.com  
-- **Partnerships**: partners@cmatrix.com
-
----
-
-<div align="center">
-
-**CMatrix – Optimized ML Inference for Embedded Systems**
-
-Professional embedded ML solutions for production applications
-
-**Contact**: info@cmatrix.com | **Support**: support@cmatrix.com
-
-</div>
+
+# Check code style
+make lint
+Contribution Guidelines
+
+Follow existing code style (C99, embedded-friendly patterns)
+Include tests for new operators
+Document memory usage and performance characteristics
+Test on at least one embedded platform
+
+Roadmap
+Version 0.2 (Q2 2025)
+
+ ONNX model import support
+ Floating-point inference (FP32)
+ ESP32 platform support
+ Batch normalization operator
+ Basic operator fusion
+
+Version 0.3 (Q3 2025)
+
+ Dynamic input shapes (limited)
+ LSTM/GRU operators
+ Advanced quantization (INT4)
+ Memory optimization tools
+ Comprehensive documentation
+
+Future (TBD)
+
+ Attention mechanisms
+ Graph optimization passes
+ Model compression techniques
+ Real-time scheduling extensions
+
+Known Issues
+
+Memory leaks in error paths (being fixed)
+Limited model validation during loading
+Platform-specific bugs on some ARM variants
+Documentation gaps in API reference
+Build system doesn't handle all cross-compilation cases
+
+Documentation
+
+API Reference - Complete API documentation
+Platform Guide - Platform-specific setup instructions
+Model Conversion - Guide to preparing models
+Performance Tuning - Optimization techniques
+Examples - Complete example projects
+
+License
+CMatrix is licensed under the MIT License. This means you can:
+✅ Use in research and commercial projects
+✅ Modify and distribute freely
+✅ Include in proprietary ML pipelines
+✅ Create derivative works
+✅ Use in embedded products and edge devices
+Requirements:
+
+Include the original copyright notice
+Include the license text in distributions
+
+Citation
+If you use CMatrix in your research, please consider citing:
+bibtex@software{cmatrix2025,}
+  title={CMatrix: Modular AI Inference Runtime for Embedded Systems},
+  author={[Your Name]},
+  year={2025},
+  url={https://github.com/NYX-ML69/CMATRIX}
+Support
+
+📖 Documentation: Check the docs directory
+🐛 Bug Reports: Use GitHub Issues
+💬 Discussions: GitHub Discussions for questions and ideas
+📧 Contact: [nyxml4761@gmail.com] for urgent issues

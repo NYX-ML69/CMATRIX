@@ -1,0 +1,92 @@
+# CMatrix License Implementation
+
+## LICENSE File (MIT License)
+
+```
+MIT License
+
+Copyright (c) 2025 [Your Name/Organization]
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+## Source File Headers
+
+Add to every source file (.c, .h, .cpp):
+
+```c
+/*
+ * CMatrix - Modular AI Inference Runtime for Embedded Systems
+ * Copyright (c) 2025 [Your Name]
+ * 
+ * Licensed under the MIT License. See LICENSE file in the project root
+ * for full license information.
+ */
+```
+
+## README License Section
+
+```markdown
+## License
+
+CMatrix is licensed under the [MIT License](LICENSE). This means you can:
+
+✅ Use in research and commercial projects  
+✅ Modify and distribute freely  
+✅ Include in proprietary ML pipelines  
+✅ Create derivative works  
+✅ Use in embedded products and edge devices  
+
+**Requirements:**
+- Include the original copyright notice
+- Include the license text in distributions
+
+**Perfect for:** Academic research, commercial ML products, embedded AI applications, and open-source ML ecosystems.
+```
+
+## Additional Licensing Considerations
+
+### Third-Party Dependencies
+- **Document all dependencies** and their licenses
+- **Ensure compatibility** - MIT is compatible with most licenses
+- **Include attribution** for any borrowed code
+
+### Contributor License Agreement (CLA)
+Consider requiring contributors to sign a simple CLA that:
+- Grants you rights to their contributions
+- Confirms they have the right to contribute
+- Allows you to change license in future if needed
+
+### Patent Considerations
+If patent protection becomes important later, you could:
+- Switch to Apache 2.0 (more complex migration)
+- Add a separate patent grant
+- For now, MIT is sufficient for most use cases
+
+### Commercial Support Model
+MIT license allows you to:
+- Offer commercial support/consulting
+- Create proprietary extensions
+- Dual-license for specific customers if needed
+
+## License Badge for README
+
+```markdown
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+```
