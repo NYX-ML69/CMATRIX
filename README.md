@@ -209,7 +209,7 @@ Citation
 If you use CMatrix in your research, please consider citing:
 bibtex@software{cmatrix2025,}
   title={CMatrix: Modular AI Inference Runtime for Embedded Systems},
-  author={[Your Name]},
+  author={[Aman]},
   year={2025},
   url={https://github.com/NYX-ML69/CMATRIX}
 Support
